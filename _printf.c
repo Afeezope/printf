@@ -1,78 +1,132 @@
-#include <stdarg.h>
-#include <unistd.h>
 #include "main.h"
-/**
-  * find_function - function that finds formats for _printf
-  * calls the corresponding function.
-  * @format: format (char, string, int, decimal)
-  * Return: NULL or function associated ;
-  */
-int (*find_function(const char *format))(va_list)
-{
-	unsigned int i = 0;
-	code_f find_f[] = {
-		{"c", print_char},
-		{"s", print_string},
-		{"i", print_int},
-		{"d", print_dec},
-		{"r", print_rev},
-		{"b", print_bin},
-		{"u", print_unsig},
-		{"o", print_octal},
-		{"x", print_x},
-		{"X", print_X},
-		{"R", print_rot13},
-		{NULL, NULL}
-	};
 
-	while (find_f[i].sc)
-	{
-		if (find_f[i].sc[0] == (*format))
-			return (find_f[i].f);
-		i++;
-	}
-	return (NULL);
+/**
+ * t_char - print a character
+ *@va:character
+ *
+ * Return: no return
+ */
+int t_char(va_list va)
+{
+	int c;
+
+	c = va_arg(va, int);
+	_putchar(c);
+	return (1);
 }
 /**
-  * _printf - function that produces output according to a format.
-  * @format: format (char, string, int, decimal)
-  * Return: size the output text;
-  */
+ * t_string - print a string
+ *@va: pointer to string
+ *
+ * Return: no return
+ */
+int t_string(va_list va)
+{
+	int i, j;
+	char n[] = "(null)";
+	char *s = va_arg(va, char *);
+
+	if (s == NULL)
+	{
+		for (i = 0; n[i] != '\0'; i++)
+			_putchar(n[i]);
+		return (6);
+	}
+	for (j = 0; s[j] != '\0'; j++)
+		_putchar(s[j]);
+	return (j);
+}
+/**
+ * print_number - Entry point
+ *@va: the integer to print
+ * Return: no return
+ */
+int print_number(va_list va)
+{
+	int i, len, r, l;
+	unsigned int abs, num, numt;
+	int n = va_arg(va, int);
+
+	len = 0;
+	i = 0;
+	r = 1;
+	l = 1;
+	if (n < 0)
+	{
+		_putchar('-');
+		len++;
+		abs = -n;
+	} else
+	{
+		abs = n;
+	}
+
+	num = abs;
+	while (num > 0)
+	{
+		num /= 10;
+		i++;
+	}
+
+	while (r < i)
+	{
+		l *= 10;
+		r++;
+	}
+	while (l >= 1)
+	{
+		numt = (abs / l) % 10;
+		_putchar(numt + '0');
+		len++;
+		l /= 10;
+	}
+	return (len);
+}
+
+/**
+ * _printf - print output according to a format
+ *@format: first argument
+ *
+ * Return: the number of characters printed(excluding the null byte)
+ */
 int _printf(const char *format, ...)
 {
-	va_list ap;
-	int (*f)(va_list);
-	unsigned int i = 0, cprint = 0;
+	int i = 0, j, len = 0, count;
+	va_list valist;
+	types difftypes[] = {{'c', t_char}, {'s', t_string}, {'d', print_number},
+			     {'i', print_number}, {'b', binary}, {'u', print_unsigned},
+			     {'x', hexa}, {'X', hexa_upper}, {'o', octal}, {'R', print_rot},
+			     {'r', print_rev}, {'S', stringhexa}, {'p', pointer}};
 
-	if (format == NULL)
+	if (format == NULL || (format[0] == '%' && format[1] == 0))
 		return (-1);
-	va_start(ap, format);
-	while (format[i])
+	va_start(valist, format);
+	while (format != NULL && format[i])
 	{
-		while (format[i] != '%' && format[i])
-		{
-			_putchar(format[i]);
-			cprint++;
-			i++;
-		}
-		if (format[i] == '\0')
-			return (cprint);
-		f = find_function(&format[i + 1]);
-		if (f != NULL)
-		{
-			cprint += f(ap);
-			i += 2;
-			continue;
-		}
-		if (!format[i + 1])
-			return (-1);
-		_putchar(format[i]);
-		cprint++;
-		if (format[i + 1] == '%')
-			i += 2;
+		if (format[i] != '%')
+			len += _putchar(format[i]);
 		else
+		{
 			i++;
-	}
-	va_end(ap);
-	return (cprint);
+			if (format[i] == '%')
+				len += _putchar('%');
+			j = 0;
+			count = 0;
+			while (j < 13)
+			{
+				if (format[i] == difftypes[j].t)
+				{
+					len += difftypes[j].f(valist);
+					count = 1;
+					break; }
+				j++; }
+			if (!count && format[i] != '%')
+			{
+				len++;
+				len++;
+				_putchar('%');
+				_putchar(format[i]); }}
+		i++; }
+	va_end(valist);
+	return (len);
 }
