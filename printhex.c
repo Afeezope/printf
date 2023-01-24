@@ -1,73 +1,69 @@
 #include "main.h"
 /**
- * printhex - prints a hexadecimal
- * @format: format to print hexadecimal
- * @pa: list that contains the hexadecimal
- * Return: number.
- */
-int printhex(char *format, va_list pa)
+* print_hex - function that prints an unsigned int in hexadecimal
+* @n: unsigned to be printed
+* @c: case of printing (0 = lower, 1 = upper)
+* Descriptions: prints unsigned in hexadecimal with _putchar
+* Return: size the output
+*/
+int print_hex(unsigned int n, unsigned int c)
 {
-	unsigned int num = va_arg(pa, unsigned int);
-	unsigned int num2;
-	int i, i2, copy, contame = 0;
-	char *numhex;
+	unsigned int len, powten, j, digit, num;
+	int count = 0;
+	char diff;
 
-	(void)format;
-
-	if (num == 0)
-		return (_putchar('0'));
-	for (num2 = num; num2 != 0; contame++)
+	if (n != 0)
 	{
-		num2 = num2 / 16;
-	}
-	numhex = malloc(contame);
-	for (i = 0; num != 0; i++)
-	{
-		copy = num % 16;
-		if (copy < 10)
-			numhex[i] = copy + '0';
+		num = n;
+		len = 0;
+		if (c)
+			diff = 'A' - ':';
 		else
-			numhex[i] = copy - 10  + 'a';
-		num = num / 16;
+			diff = 'a' - ':';
+		while (num != 0)
+		{
+			num /= 16;
+			len++;
+		}
+		powten = 1;
+		for (j = 1; j <= len - 1; j++)
+			powten *= 16;
+		for (j = 1; j <= len; j++)
+		{
+			digit = n / powten;
+			if (digit < 10)
+				_putchar(digit + '0');
+			else
+				_putchar(digit + '0' + diff);
+			count++;
+			n -= digit * powten;
+			powten /= 16;
+		}
 	}
-	for (i2 = i - 1; i2 >= 0; i2--)
-		_putchar(numhex[i2]);
-	free(numhex);
-	return (contame);
+	else
+	{
+		_putchar('0');
+		return (1);
+	}
+	return (count);
 }
 /**
- * printHEX - prints a hexadecimal
- * @format: format to print hexadecimal
- * @pa: va_list that contains the hexadecimal to print
- * Return: number of digits printed
- */
-int printHEX(char *format, va_list pa)
+* print_x - takes an unsigned int an prints it in lowercase hex
+* @x: unsigned int to print
+* Descriptions: prints in lowercase hex with _putchar
+* Return: size of the output
+*/
+int print_x(va_list x)
 {
-	unsigned int NUM = va_arg(pa, unsigned int);
-	unsigned int NUM2;
-	int I, I2, COPY, CONTAME = 0;
-	char *NUMHEX;
-
-	(void)format;
-
-	if (NUM == 0)
-		return (_putchar('0'));
-	for (NUM2 = NUM; NUM2 != 0; CONTAME++)
-	{
-		NUM2 = NUM2 / 16;
-	}
-	NUMHEX = malloc(CONTAME);
-	for (I = 0; NUM != 0; I++)
-	{
-		COPY = NUM % 16;
-		if (COPY < 10)
-			NUMHEX[I] = COPY + '0';
-		else
-			NUMHEX[I] = COPY - 10 + 'A';
-		NUM = NUM / 16;
-	}
-	for (I2 = I - 1; I2 >= 0; I2--)
-		_putchar(NUMHEX[I2]);
-	free(NUMHEX);
-	return (CONTAME);
+	return (print_hex(va_arg(x, unsigned int), 0));
+}
+/**
+* print_X - takes an unsigned int an prints it in uppercase hex
+* @X: unsigned int to print
+* Descriptions: prints in uppercase hex with _putchar
+* Return: size of the output
+*/
+int print_X(va_list X)
+{
+	return (print_hex(va_arg(X, unsigned int), 1));
 }
