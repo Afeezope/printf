@@ -1,25 +1,33 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "main.h"
-/**
-*print_rev - prints astring in reverse
-*@r: string to print
-*Return: number of chars printed
-*/
-int print_rev(va_list r)
-{
-	char *st;
-	int i, j = 0;
 
-	st = va_arg(r, char *);
-	if (st == NULL)
-		st = ")llun(";
-	for (i = 0; st[i] != '\0'; i++)
-		;
-	for (i -= 1 ; i >= 0; i--)
+/**
+ * octal - print a
+ *@va:unsigned integer input
+ *
+ * Return: no return
+ */
+int octal(va_list va)
+{
+	unsigned int c;
+	int  i, j;
+	int arr[100];
+
+	c = va_arg(va, unsigned int);
+	i = 0;
+	if (c == 0)
 	{
-		_putchar(st[i]);
-		j++;
+		_putchar('0');
+		return (1);
 	}
-	return (j);
+	while (c != 0)
+	{
+		arr[i] = c % 8;
+		c = c / 8;
+		i++;
+	}
+	for (j = i - 1; j >= 0; j--)
+		_putchar(arr[j] + '0');
+	return (i);
 }

@@ -1,48 +1,63 @@
+#include <stdarg.h>
+#include <stdio.h>
 #include "main.h"
-/**
-* print_int - function that prints an integer
-* @i: integer to print
-* Descriptions: prints digit with _putchar
-* Return: size the output text
-*/
-int print_int(va_list i)
-{
-	int len, powten, j, digit, n, count = 0, num;
 
-	n = va_arg(i, int);
-	if (n != 0)
+/**
+* pointer - print a
+*@va:argument
+*
+* Return: length
+*/
+int pointer(va_list va)
+{
+	void *p;
+	char *n = "(nil)";
+	long int cast;
+	int a, i;
+
+	p = va_arg(va, void*);
+	if (p == NULL)
 	{
-		if (n < 0)
-		{
-			_putchar('-');
-			count++;
-		}
-		num = n;
-		len = 0;
-		while (num != 0)
-		{
-			num /= 10;
-			len++;
-		}
-		powten = 1;
-		for (j = 1; j <= len - 1; j++)
-			powten *= 10;
-		for (j = 1; j <= len; j++)
-		{
-			digit = n / powten;
-			if (n < 0)
-				_putchar((digit * -1) + 48);
-			else
-				_putchar(digit + '0');
-			count++;
-			n -= digit * powten;
-			powten /= 10;
-		}
+		for (i = 0; n[i] != '\0'; i++)
+			_putchar(n[i]);
+		return (i);
 	}
-	else
+	cast = (unsigned long int)p;
+	_putchar('0');
+	_putchar('x');
+	a = hexa_pointer(cast);
+	return (a + 2);
+}
+
+/**
+ * hexa_pointer - print a
+ *@c:unsigned long int to convert in hexa
+ *
+ * Return: length
+ */
+int hexa_pointer(unsigned long int c)
+{
+	int  i, j, temp;
+	int arr[100];
+
+	i = 0;
+	temp = 0;
+	if (c == 0)
 	{
 		_putchar('0');
 		return (1);
 	}
-	return (count);
+	while (c != 0)
+	{
+		temp = c % 16;
+		if (temp < 10)
+			arr[i] = 48 + temp;
+		else
+			arr[i] = 87 + temp;
+		c = c / 16;
+		i++;
+	}
+	for (j = i - 1; j >= 0; j--)
+		_putchar(arr[j]);
+	return (i);
 }

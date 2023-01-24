@@ -1,41 +1,33 @@
+#include <stdarg.h>
+#include <stdio.h>
 #include "main.h"
-/**
-* print_octal - unsigned int argument is converted to unsigned octal
-* @o: unsigned to be converted
-* Descriptions: prints unsigned octal
-* Return: size the output
-*/
-int print_octal(va_list o)
-{
-	unsigned int len, powten, j, digit, n, num;
-	int count = 0;
 
-	n = va_arg(o, unsigned int);
-	if (n != 0)
-	{
-		num = n;
-		len = 0;
-		while (num != 0)
-		{
-			num /= 8;
-			len++;
-		}
-		powten = 1;
-		for (j = 1; j <= len - 1; j++)
-			powten *= 8;
-		for (j = 1; j <= len; j++)
-		{
-			digit = n / powten;
-			_putchar(digit + '0');
-			count++;
-			n -= digit * powten;
-			powten /= 8;
-		}
-	}
-	else
+/**
+ * octal - print a
+ *@va:unsigned integer input
+ *
+ * Return: no return
+ */
+int octal(va_list va)
+{
+	unsigned int c;
+	int  i, j;
+	int arr[100];
+
+	c = va_arg(va, unsigned int);
+	i = 0;
+	if (c == 0)
 	{
 		_putchar('0');
 		return (1);
 	}
-	return (count);
+	while (c != 0)
+	{
+		arr[i] = c % 8;
+		c = c / 8;
+		i++;
+	}
+	for (j = i - 1; j >= 0; j--)
+		_putchar(arr[j] + '0');
+	return (i);
 }
